@@ -23,47 +23,53 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getById(long id) {
-        return productRepository.findById(id);
+    public Product getById(long id) {
+        //return productRepository.findById(id);
+        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public Object deleteById(long id) {
-        Optional<Product> prod = getById(id);
-
-        if(prod.isPresent()) {
-            productRepository.deleteById(id);
-
-            return "Product deleted";
-        } else {
-            return "Product not found";
-        }
+    public void deleteById(long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        productRepository.delete(product);
     }
 
-    public Object editById(long id, ProductRequestDTO productRequestDTO) {
-        Optional<Product> prod = getById(id);
-
-        if(prod.isPresent()) {
-            Category category = categoryRepository.findById(productRequestDTO.getCategory().getId()).orElseThrow(() -> new RuntimeException("Category not found"));
-            Product product = prod.get();
-            /////////////////////
-            product.setName(productRequestDTO.getName());
-            product.setDescription(productRequestDTO.getDescription());
-            product.setPrice(productRequestDTO.getPrice());
-            product.setAvailability(productRequestDTO.isAvailability()); //buat boolean itu GETnya pake is (isAvailability) dari Lombok
-            product.setCategory(category);
-
-            productRepository.save(product);
-
-            return "Product updated";
-        } else {
-            return "Error occured!";
+    public Product editById(long id, ProductRequestDTO productRequestDTO) {
+        long category_id = productRequestDTO.getCategory().getId();
+        if (category_id < 1 || category_id > 11) {
+            throw new RuntimeException("Invalid category id");
         }
+
+        double price = productRequestDTO.getPrice();
+        if (price < 0) {
+            throw new RuntimeException("Invalid price");
+        }
+
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        Category category = categoryRepository.findById(productRequestDTO.getCategory().getId()).orElseThrow(() -> new RuntimeException("Invalid Category"));
+
+        product.setName(productRequestDTO.getName());
+        product.setDescription(productRequestDTO.getDescription());
+        product.setPrice(productRequestDTO.getPrice());
+        product.setAvailability(productRequestDTO.isAvailability()); //buat boolean itu GETnya pake is (isAvailability) dari Lombok
+        product.setCategory(category);
+
+        return productRepository.save(product);
     }
 
     public Product create(ProductRequestDTO productRequestDTO) {
-        Category category = categoryRepository.findById(productRequestDTO.getCategory().getId()).orElseThrow(() -> new RuntimeException("Category not found"));
+        long category_id = productRequestDTO.getCategory().getId();
+        if (category_id < 1 || category_id > 11) {
+            throw new RuntimeException("Invalid category id");
+        }
+
+        double price = productRequestDTO.getPrice();
+        if (price < 0) {
+            throw new RuntimeException("Invalid price");
+        }
+
+        Category category = categoryRepository.findById(productRequestDTO.getCategory().getId()).orElseThrow(() -> new RuntimeException("Invalid Category"));
         Product product = new Product();
-        ////////////////////
+
         product.setName(productRequestDTO.getName());
         product.setDescription(productRequestDTO.getDescription());
         product.setPrice(productRequestDTO.getPrice());
