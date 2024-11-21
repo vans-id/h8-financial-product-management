@@ -6,6 +6,7 @@ import id.co.cimbniaga.financialproductmanagement.dto.ProductResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
 import id.co.cimbniaga.financialproductmanagement.model.User;
 import id.co.cimbniaga.financialproductmanagement.service.ProductService;
+import id.co.cimbniaga.financialproductmanagement.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ import java.util.Optional;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ReportService reportService;
 
     @GetMapping()
     public ResponseEntity<?> getAll() {

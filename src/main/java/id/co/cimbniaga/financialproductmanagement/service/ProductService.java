@@ -2,8 +2,11 @@ package id.co.cimbniaga.financialproductmanagement.service;
 
 
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
+import id.co.cimbniaga.financialproductmanagement.dto.UserRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
+import id.co.cimbniaga.financialproductmanagement.model.Report;
+import id.co.cimbniaga.financialproductmanagement.model.User;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
 import id.co.cimbniaga.financialproductmanagement.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +68,7 @@ public class ProductService {
     public Product create(ProductRequestDTO productRequestDTO) {
         long category_id = productRequestDTO.getCategory().getId();
         if (category_id < 1 || category_id > 11) {
-            throw new RuntimeException("Invalid category id");
+            throw new RuntimeException("Invalid Category");
         }
 
         double price = productRequestDTO.getPrice();
