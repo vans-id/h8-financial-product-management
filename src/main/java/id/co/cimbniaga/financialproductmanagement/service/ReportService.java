@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +16,17 @@ public class ReportService {
     @Autowired
     private ReportRepository reportRepository;
 
-    public List<ReportSummaryDTO> getTopProducts() {
-        // Get the results from the repository
-        List<Object[]> results = reportRepository.getTopProducts();
+    public List<ReportSummaryDTO> getTopProducts(ReportSummaryDTO reportSummaryDTO) {
+        // Extract the start_date and end_date from the DTO (received from the request body)
+        LocalDate startDate = reportSummaryDTO.getStart_date();
+        LocalDate endDate = reportSummaryDTO.getEnd_date();
+
+        // Log to verify that the dates are being passed correctly
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End Date: " + endDate);
+
+        // Get the results from the repository with the start and end dates
+        List<Object[]> results = reportRepository.getTopProducts(startDate, endDate);
 
         // List to hold the mapped DTO data
         List<ReportSummaryDTO> reportSummaryDTOs = new ArrayList<>();
@@ -32,11 +41,15 @@ public class ReportService {
             // Convert the price from Double to BigDecimal
             BigDecimal price = BigDecimal.valueOf(priceDouble);
 
-            // Create a new ReportSummaryDTO with the extracted data
-            ReportSummaryDTO reportSummaryDTO = new ReportSummaryDTO(email, productName, productCount, price);
+            // Create a new ReportSummaryDTO with the extracted data (excluding start_date and end_date)
+            ReportSummaryDTO dto = new ReportSummaryDTO();
+            dto.setEmail(email);
+            dto.setProductName(productName);
+            dto.setProductCount(productCount);
+            dto.setPrice(price);
 
             // Add the DTO to the list
-            reportSummaryDTOs.add(reportSummaryDTO);
+            reportSummaryDTOs.add(dto);
         }
 
         return reportSummaryDTOs;

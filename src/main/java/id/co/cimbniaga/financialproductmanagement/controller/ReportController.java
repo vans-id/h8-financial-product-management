@@ -4,6 +4,7 @@ import id.co.cimbniaga.financialproductmanagement.dto.ReportSummaryDTO;
 import id.co.cimbniaga.financialproductmanagement.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,7 @@ public class ReportController {
     private ReportService reportService;
 
     @GetMapping
-    public List<ReportSummaryDTO> getTopProducts() {
-        return reportService.getTopProducts();
+    public List<ReportSummaryDTO> getTopProducts(@RequestBody ReportSummaryDTO reportSummaryDTO) {
+        return reportService.getTopProducts(reportSummaryDTO);
     }
 }
