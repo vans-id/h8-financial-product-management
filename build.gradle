@@ -50,6 +50,9 @@ dependencies {
     // Dotenv
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
+    //PasswordEncoder
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
     testImplementation 'org.mockito:mockito-core:5.5.0'
