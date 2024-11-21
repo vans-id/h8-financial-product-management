@@ -31,17 +31,28 @@ public class UserService {
         return user.get();
     }
 
-    public User registerUser(String email, String password, String role) {
-        if (userRepository.findByEmail(email).isPresent()) {
+    public User registerUser(UserRequestDTO) {
+        if (userRepository.findByEmail(userRequestDTO.getEmail).isPresent()) {
             return null;
         }
 
         String encodedPassword = passwordEncoder.encode(password);
         User user = new User();
-        user.setEmail(email);
-        user.setPassword(encodedPassword);
-        user.setRole(role);
+        user.setEmail(userRequestDTO.getEmail);
+        user.setPassword(userRequestDTO.getPassword);
+        user.setRole(userRequestDTO.getRole);
 
         return userRepository.save(user);
+
+
+
+        //Login User
+        public boolean LoginUser(UserRequestDTO userRequestDTO){
+            User user = userRepository.findByEmail(userRequestDTO.getEmail());
+            return user!= null;
+        }
     }
-}
+
+
+
+
