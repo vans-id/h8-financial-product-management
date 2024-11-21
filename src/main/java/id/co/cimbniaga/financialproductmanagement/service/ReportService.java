@@ -31,20 +31,20 @@ public class ReportService {
 
         // Process each result and convert to SimplifiedReportDTO
         for (Object[] result : results) {
-            String email = (String) result[0];  // Email from the user table
-            String productName = (String) result[1];  // Product name from the product table
-            Long productCount = (Long) result[2];  // Count of the product
-            Double priceDouble = (Double) result[3];  // Price from the product table
+            String productName = (String) result[0];
+            Long productCount = (Long) result[1];
+            Double priceDouble = (Double) result[2];
+            Long stock = (Long) result[3];
 
             // Convert the price from Double to BigDecimal
             BigDecimal price = BigDecimal.valueOf(priceDouble);
 
             // Create a new SimplifiedReportDTO with the extracted data (excluding start_date and end_date)
             SimplifiedReportDTO dto = new SimplifiedReportDTO();
-            dto.setEmail(email);
             dto.setProductName(productName);
             dto.setProductCount(productCount);
             dto.setPrice(price);
+            dto.setStock(stock);
 
             // Add the DTO to the list
             simplifiedReportDTOS.add(dto);

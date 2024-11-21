@@ -2,7 +2,6 @@ package id.co.cimbniaga.financialproductmanagement.repository;
 
 import id.co.cimbniaga.financialproductmanagement.model.Report;
 import io.lettuce.core.dynamic.annotation.Param;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Query(value =
             """
-                SELECT u.email, p.name, COUNT(r.product_id), p.price 
+                SELECT  p.name, COUNT(r.product_id), p.price , p.stock
                 FROM reports r
                 INNER JOIN products p ON r.product_id = p.id
                 INNER JOIN users u ON r.user_id = u.id
