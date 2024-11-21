@@ -1,6 +1,8 @@
 package id.co.cimbniaga.financialproductmanagement.controller;
 
+import id.co.cimbniaga.financialproductmanagement.dto.CategoryResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
+import id.co.cimbniaga.financialproductmanagement.dto.ProductResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
 import id.co.cimbniaga.financialproductmanagement.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -27,10 +30,14 @@ public class ProductController {
         //return productService.getById(id);
         try {
             Product product = productService.getById(id);
-            return ResponseEntity.ok(product);
+            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                    "Product with id-" + id, productResponseDTO
+            ));
         } catch (Exception e) {
             //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found!");
         }
     }
 
@@ -39,9 +46,13 @@ public class ProductController {
         //return productService.editById(id, productRequestDTO);
         try {
             Product product = productService.editById(id, productRequestDTO);
-            return ResponseEntity.ok(product);
+            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                    "Product with id-" + id + " successfully MODIFIED", productResponseDTO
+            ));
         }  catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid input!");
         }
     }
 
@@ -49,10 +60,16 @@ public class ProductController {
     public ResponseEntity<?> delete(@PathVariable long id) {
         //return productService.deleteById(id);
         try {
+            Product product = productService.getById(id);
+            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+
             productService.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Insurance policy deleted");
+
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                    "Product with id-" + id + " successfully DELETED", productResponseDTO
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found!");
         }
     }
 
@@ -63,9 +80,30 @@ public class ProductController {
         //return productService.create(productRequestDTO);
         try {
             Product product = productService.create(productRequestDTO);
-            return ResponseEntity.ok(product);
+            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "New Product successfully ADDED", productResponseDTO
+            ));
+
         }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    public ProductResponseDTO toProductResponseDTO(Product product) {
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.isAvailability(),
+                new CategoryResponseDTO(
+                        product.getCategory().getId(),
+                        product.getCategory().getName()
+                )
+        );
+    }
+
+
 }

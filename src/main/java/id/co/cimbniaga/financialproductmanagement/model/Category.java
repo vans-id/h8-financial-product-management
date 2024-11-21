@@ -11,5 +11,6 @@ public class Category {
     @Column(name = "category_id")
     private long id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 }
