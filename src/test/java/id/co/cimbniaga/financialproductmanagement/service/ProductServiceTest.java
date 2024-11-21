@@ -162,8 +162,6 @@ class ProductServiceTest {
 
         productService.deleteById(1);
 
-        //timesny 2 kali utk jalanin productRepository.findById() dan productRepository.deleteById().
-        //karena di dalam .deleteById itu ada .findById() dlu.
         verify(productRepository, times(1)).delete(product1);
 
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
@@ -174,12 +172,28 @@ class ProductServiceTest {
     @Test
     void deleteByIdWithNoData() {
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
-
         //pake assertThrows supaya pas .deleteByIdnya return Exception, test bakal ttp lanjut
         assertThrows(RuntimeException.class, () -> productService.deleteById(1L));
 
         verify(productRepository, never()).delete(any(Product.class));
         verify(productRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void deleteByIdInvalidId() {
+        List<Product> products = new ArrayList<>();
+        products.add(productAddDummyData(1));
+
+        long invalidId = 2L;
+
+        when(productRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            productService.getById(2);
+        });
+
+        assertNotNull(thrown);
+        assertEquals("Product not found", thrown.getMessage());
     }
 
     ///////////////////////////////
@@ -215,7 +229,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void editByIdWithNoData() {
+    void editByIdWithInvalidId() {
         long nonExistentProductId = 100L;
 
         when(productRepository.findById(nonExistentProductId)).thenReturn(Optional.empty());
@@ -235,13 +249,69 @@ class ProductServiceTest {
 
         assertEquals("Product not found", thrown.getMessage());
         verify(productRepository, never()).save(any(Product.class));
-        productRequestDTO.setPrice(-1.0);
+    }
 
-        thrown = assertThrows(RuntimeException.class, () -> {
+    @Test
+    void editByIdInvalidCategoryId() {
+        long nonExistentProductId = 100L;
+
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setName("Updated Product");
+        productRequestDTO.setDescription("Updated description");
+        productRequestDTO.setPrice(1.0);
+        productRequestDTO.setStock(1500);
+        productRequestDTO.setAvailability(true);
+        productRequestDTO.setCategory(categoryAddDummyData(100));
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            productService.editById(nonExistentProductId, productRequestDTO);
+        });
+
+        assertEquals("Invalid category id", thrown.getMessage());
+
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void editByIdInvalidPrice() {
+        long nonExistentProductId = 100L;
+
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setName("Updated Product");
+        productRequestDTO.setDescription("Updated description");
+        productRequestDTO.setPrice(-1.0);
+        productRequestDTO.setStock(1500);
+        productRequestDTO.setAvailability(true);
+        productRequestDTO.setCategory(categoryAddDummyData(1));
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
             productService.editById(nonExistentProductId, productRequestDTO);
         });
 
         assertEquals("Invalid price", thrown.getMessage());
+
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void editByIdWithInvalidStock() {
+        long nonExistentProductId = 100L;
+
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setName("Updated Product");
+        productRequestDTO.setDescription("Updated description");
+        productRequestDTO.setPrice(1.0);
+        productRequestDTO.setStock(-1);
+        productRequestDTO.setAvailability(true);
+        productRequestDTO.setCategory(categoryAddDummyData(1));
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            productService.editById(nonExistentProductId, productRequestDTO);
+        });
+
+        assertEquals("Stock must be greater than zero", thrown.getMessage());
+
+        verify(productRepository, never()).save(any(Product.class));
     }
 
     ///////////////////////////////
@@ -275,11 +345,29 @@ class ProductServiceTest {
     }
 
     @Test
-    void createWithNoData() {
+    void createWithInvalidCategoryId() {
         ProductRequestDTO productRequestDTO = new ProductRequestDTO();
         productRequestDTO.setName("Test Product");
         productRequestDTO.setDescription("Test Description");
         productRequestDTO.setPrice(10.0);
+        productRequestDTO.setStock(100);
+        productRequestDTO.setAvailability(true);
+        productRequestDTO.setCategory(categoryAddDummyData(100));
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> productService.create(productRequestDTO));
+
+        assertEquals("Invalid Category", exception.getMessage());
+
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void createWithInvalidPrice() {
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setName("Test Product");
+        productRequestDTO.setDescription("Test Description");
+        productRequestDTO.setPrice(-10.0);
         productRequestDTO.setStock(100);
         productRequestDTO.setAvailability(true);
         productRequestDTO.setCategory(categoryAddDummyData(1));
@@ -287,7 +375,25 @@ class ProductServiceTest {
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> productService.create(productRequestDTO));
 
-        assertEquals("Invalid Category", exception.getMessage());
+        assertEquals("Invalid price", exception.getMessage());
+
+        verify(productRepository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void createWithInvalidStock() {
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setName("Test Product");
+        productRequestDTO.setDescription("Test Description");
+        productRequestDTO.setPrice(10.0);
+        productRequestDTO.setStock(-100);
+        productRequestDTO.setAvailability(true);
+        productRequestDTO.setCategory(categoryAddDummyData(1));
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> productService.create(productRequestDTO));
+
+        assertEquals("Stock must be greater than zero", exception.getMessage());
 
         verify(productRepository, never()).save(any(Product.class));
     }
