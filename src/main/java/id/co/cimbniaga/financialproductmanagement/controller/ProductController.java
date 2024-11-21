@@ -21,8 +21,13 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping()
-    public List<Product> getAll() {
-        return productService.getAll();
+    public ResponseEntity<?> getAll() {
+        try {
+            List<Product> products = productService.getAll();
+            return ResponseEntity.status(HttpStatus.OK).body(products);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail to get Products");
+        }
     }
 
     @GetMapping("/{id}")
@@ -106,6 +111,5 @@ public class ProductController {
                 )
         );
     }
-
 
 }
