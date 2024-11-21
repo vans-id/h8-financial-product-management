@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    public static final String SECRET_KEY = "eO9ULfX9eBmNUt89N5EXrQc16pqDLSHM";
+    public static final String SECRET_KEY = "MsaDo20fX9eBmNUt89N5EXrQc16pqDLSHM";
 
     // Generate token with given user name
     public String generateToken(String email, String role) {
