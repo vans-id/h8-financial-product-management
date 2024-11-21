@@ -22,4 +22,10 @@ public class Product {
     @Column(nullable = false)
     private boolean availability;
 
+    @Column(nullable = false)
+    private long stock;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
