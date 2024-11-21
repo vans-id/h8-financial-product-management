@@ -13,13 +13,14 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Query(value =
             """
-                SELECT u.email,p.name,COUNT(r.product_id),p.price FROM reports r
-                INNER JOIN  products p
-                ON r.product_id  = p.id
-                INNER JOIN  users u
+                SELECT u.email, p.name, COUNT(r.product_id), p.price 
+                FROM reports r
+                INNER JOIN products p
+                ON r.product_id = p.id
+                INNER JOIN users u
                 ON r.user_id = u.id
-                GROUP BY r.product_id,u.email,p.name
-                ORDER BY  COUNT(r.product_id) DESC
+                GROUP BY r.product_id, u.email, p.name
+                ORDER BY COUNT(r.product_id) DESC
             """, nativeQuery = true)
     List<Object[]> getTopProducts();
 }
