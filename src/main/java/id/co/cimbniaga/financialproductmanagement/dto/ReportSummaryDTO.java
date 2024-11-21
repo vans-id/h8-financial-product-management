@@ -13,9 +13,7 @@ public class ReportSummaryDTO {
     private String productName;
     private Long productCount;
     private BigDecimal price;
-    @JsonIgnore
-    private LocalDate start_date;
-    @JsonIgnore
-    private LocalDate end_date;
+    private transient LocalDate start_date;
+    private transient LocalDate end_date;
 
 }

@@ -1,6 +1,7 @@
 package id.co.cimbniaga.financialproductmanagement.controller;
 
 import id.co.cimbniaga.financialproductmanagement.dto.ReportSummaryDTO;
+import id.co.cimbniaga.financialproductmanagement.dto.SimplifiedReportDTO;
 import id.co.cimbniaga.financialproductmanagement.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class ReportController {
     private ReportService reportService;
 
     @GetMapping
-    public List<ReportSummaryDTO> getTopProducts(@RequestBody ReportSummaryDTO reportSummaryDTO) {
+    public List<SimplifiedReportDTO> getTopProducts(@RequestBody ReportSummaryDTO reportSummaryDTO) {
         return reportService.getTopProducts(reportSummaryDTO);
     }
 }
