@@ -64,6 +64,13 @@ class ReportServiceTest {
         assertEquals(0, emptyList.size());
 
 
+        // Test case with end date before start date
+        ReportSummaryDTO invalidDate = new ReportSummaryDTO();
+        invalidDate.setStartDate(LocalDate.of(2022, 12, 26));
+        invalidDate.setEndDate(LocalDate.of(2022, 12, 25));
+        List<SimplifiedReportDTO> invalidDateList = reportService.getTopProducts(invalidDate);
+        assertNotNull(invalidDateList);
+        assertEquals(0, invalidDateList.size());
 
     }
 }
