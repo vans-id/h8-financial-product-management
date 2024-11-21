@@ -4,7 +4,7 @@ package id.co.cimbniaga.financialproductmanagement.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity(name = "Users")
+@Entity(name = "users")
 @Data
 public class User {
     @Id

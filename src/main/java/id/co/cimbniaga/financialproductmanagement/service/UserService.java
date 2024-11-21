@@ -12,6 +12,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+
+
     //Register User
     public User registerUser(UserRequestDTO userRequestDTO) {
         User user = new User();
@@ -25,6 +27,6 @@ public class UserService {
     //Login User
     public boolean LoginUser(UserRequestDTO userRequestDTO){
         User user = userRepository.findByEmail(userRequestDTO.getEmail());
-        return user!= null && userRequestDTO.getPassword().equals(user.getPassword());
+        return user!= null;
     }
 }
