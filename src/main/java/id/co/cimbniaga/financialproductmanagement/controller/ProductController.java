@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -30,11 +30,12 @@ public class ProductController {
         //return productService.getById(id);
         try {
             Product product = productService.getById(id);
-            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
-
-            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-                    "Product with id-" + id, productResponseDTO
-            ));
+//            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+//
+//            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+//                    "Product with id-" + id, productResponseDTO
+//            ));
+            return ResponseEntity.ok(product);
         } catch (Exception e) {
             //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item not found!");
@@ -80,12 +81,12 @@ public class ProductController {
         //return productService.create(productRequestDTO);
         try {
             Product product = productService.create(productRequestDTO);
-            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "New Product successfully ADDED", productResponseDTO
-            ));
-
+//            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+//
+//            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+//                    "New Product successfully ADDED", productResponseDTO
+//            ));
+            return ResponseEntity.ok(product);
         }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
