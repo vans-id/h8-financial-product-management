@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     private final JwtUtil jwtUtil;
 
@@ -27,12 +27,11 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
         User user = userService.validateUser(loginRequest.getEmail(), loginRequest.getPassword());
-
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
-
+        userService.LogLoginUser(user);
         return ResponseEntity.ok(token);
     }
 
