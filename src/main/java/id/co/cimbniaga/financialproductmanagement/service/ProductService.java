@@ -44,7 +44,7 @@ public class ProductService {
             throw new RuntimeException("Invalid price");
         }
 
-        double stock = productRequestDTO.getStock();
+        long stock = productRequestDTO.getStock();
         if (stock < 0) {
             throw new RuntimeException("Stock must be greater than zero");
         }
