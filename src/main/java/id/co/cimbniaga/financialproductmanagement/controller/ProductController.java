@@ -4,16 +4,24 @@ import id.co.cimbniaga.financialproductmanagement.dto.CategoryResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
+import id.co.cimbniaga.financialproductmanagement.model.Report;
+import id.co.cimbniaga.financialproductmanagement.model.User;
+import id.co.cimbniaga.financialproductmanagement.repository.ReportRepository;
 import id.co.cimbniaga.financialproductmanagement.service.ProductService;
 import id.co.cimbniaga.financialproductmanagement.service.ReportService;
+import id.co.cimbniaga.financialproductmanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -23,11 +31,39 @@ public class ProductController {
 
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private ReportRepository reportRepository;
+
+    private void addReport(String activity, Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currUser = (User) authentication.getPrincipal();
+        User user = userService.validateUser(currUser.getEmail(), currUser.getPassword());
+
+        Report report = new Report();
+        report.setUser(user);
+        report.setProduct(product);
+        report.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+
+        if(activity.equals("GETALL")){
+            report.setActivityType(activity);
+            report.setDetails("User " + currUser.getEmail() + " " + activity + " Products.");
+
+        } else {
+            report.setActivityType(activity);
+            report.setDetails("User " + currUser.getEmail() + " " + activity + " Product: " + product.getName());
+        }
+
+        reportRepository.save(report);
+    }
 
     @GetMapping()
     public ResponseEntity<?> getAll() {
         try {
             List<Product> products = productService.getAll();
+            addReport("GETALL", products.get(0)); //khusus buat GETALL, Product yg di pass ke addReport() ga dipake
             return ResponseEntity.status(HttpStatus.OK).body(products);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail to get Products");
@@ -39,11 +75,7 @@ public class ProductController {
         //return productService.getById(id);
         try {
             Product product = productService.getById(id);
-//            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
-//
-//            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-//                    "Product with id-" + id, productResponseDTO
-//            ));
+            addReport("GETBYID", product);
             return ResponseEntity.ok(product);
         } catch (Exception e) {
             //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -57,6 +89,7 @@ public class ProductController {
         try {
             Product product = productService.editById(id, productRequestDTO);
             ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
+            addReport("EDIT", product);
 
             return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                     "Product with id-" + id + " successfully MODIFIED", productResponseDTO
@@ -74,6 +107,7 @@ public class ProductController {
             ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
 
             productService.deleteById(id);
+            addReport("DELETE", product);
 
             return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                     "Product with id-" + id + " successfully DELETED", productResponseDTO
@@ -90,11 +124,8 @@ public class ProductController {
         //return productService.create(productRequestDTO);
         try {
             Product product = productService.create(productRequestDTO);
-//            ProductResponseDTO productResponseDTO = toProductResponseDTO(product);
-//
-//            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-//                    "New Product successfully ADDED", productResponseDTO
-//            ));
+            addReport("CREATE", product);
+
             return ResponseEntity.ok(product);
         }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
