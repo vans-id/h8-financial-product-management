@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/reports")
 public class ReportController {
@@ -16,15 +18,10 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @GetMapping
-    public ResponseEntity<?> getTopProducts(){
 
-        try {
-            reportService.getTopProducts();
-            return ResponseEntity.status(HttpStatus.OK).body("AHAHAHAHHAHAHA");
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @GetMapping()
+    public List<Report> getTopProducts() {
+        return reportService.getTopProducts();
     }
 
 
