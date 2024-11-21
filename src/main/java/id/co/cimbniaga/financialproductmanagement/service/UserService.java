@@ -48,7 +48,6 @@ public class UserService {
 
 
         reportRepository.save(report);
-
     }
 
     public User registerUser(UserRequestDTO userRequestDTO) {
