@@ -4,10 +4,13 @@ import id.co.cimbniaga.financialproductmanagement.dto.CategoryResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductResponseDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
+import id.co.cimbniaga.financialproductmanagement.model.User;
 import id.co.cimbniaga.financialproductmanagement.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +25,11 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity<?> getAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currUser = (User) authentication.getPrincipal();
+
+        System.out.println(currUser.getId());
+
         try {
             List<Product> products = productService.getAll();
             return ResponseEntity.status(HttpStatus.OK).body(products);
