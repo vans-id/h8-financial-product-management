@@ -99,6 +99,7 @@ public class ProductController {
                 product.getDescription(),
                 product.getPrice(),
                 product.isAvailability(),
+                product.getStock(),
                 new CategoryResponseDTO(
                         product.getCategory().getId(),
                         product.getCategory().getName()

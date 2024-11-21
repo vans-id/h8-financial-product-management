@@ -9,5 +9,6 @@ public class ProductRequestDTO {
     private String description;
     private double price;
     private boolean availability;
+    private long stock;
     private Category category;
 }

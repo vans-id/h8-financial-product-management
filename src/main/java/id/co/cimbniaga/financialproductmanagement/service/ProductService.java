@@ -44,6 +44,11 @@ public class ProductService {
             throw new RuntimeException("Invalid price");
         }
 
+        double stock = productRequestDTO.getStock();
+        if (stock < 0) {
+            throw new RuntimeException("Stock must be greater than zero");
+        }
+
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         Category category = categoryRepository.findById(productRequestDTO.getCategory().getId()).orElseThrow(() -> new RuntimeException("Invalid Category"));
 
@@ -51,6 +56,7 @@ public class ProductService {
         product.setDescription(productRequestDTO.getDescription());
         product.setPrice(productRequestDTO.getPrice());
         product.setAvailability(productRequestDTO.isAvailability()); //buat boolean itu GETnya pake is (isAvailability) dari Lombok
+        product.setStock(productRequestDTO.getStock());
         product.setCategory(category);
 
         return productRepository.save(product);
@@ -67,6 +73,11 @@ public class ProductService {
             throw new RuntimeException("Invalid price");
         }
 
+        double stock = productRequestDTO.getStock();
+        if (stock < 0) {
+            throw new RuntimeException("Stock must be greater than zero");
+        }
+
         Category category = categoryRepository.findById(productRequestDTO.getCategory().getId()).orElseThrow(() -> new RuntimeException("Invalid Category"));
         Product product = new Product();
 
@@ -74,6 +85,7 @@ public class ProductService {
         product.setDescription(productRequestDTO.getDescription());
         product.setPrice(productRequestDTO.getPrice());
         product.setAvailability(productRequestDTO.isAvailability()); //buat boolean itu GETnya pake is (isAvailability) dari Lombok
+        product.setStock(productRequestDTO.getStock());
         product.setCategory(category);
 
         return productRepository.save(product);
