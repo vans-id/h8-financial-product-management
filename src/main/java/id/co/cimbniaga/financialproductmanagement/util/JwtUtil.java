@@ -3,7 +3,6 @@ package id.co.cimbniaga.financialproductmanagement.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,7 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-    public static final String SECRET_KEY = "0XBmalDg219BNUmSwDS076SNM";
+    public static final String SECRET_KEY = "eO9ULfX9eBmNUt89N5EXrQc16pqDLSHM";
 
     // Generate token with given user name
     public String generateToken(String email, String role) {
@@ -26,19 +25,14 @@ public class JwtUtil {
     }
 
     private String createToken(Map<String, Object> claims, String email) {
+        Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // Token valid for 30 minutes
-                .signWith(getSignKey(), SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    // Get the signing key for JWT token
-    private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // Extract the username from the token
