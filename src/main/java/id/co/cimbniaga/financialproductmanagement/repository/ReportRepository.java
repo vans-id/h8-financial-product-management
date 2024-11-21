@@ -16,10 +16,9 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
             """
                 SELECT  p.name, COUNT(r.product_id), p.price , p.stock
                 FROM reports r
-                INNER JOIN products p ON r.product_id = p.id
-                INNER JOIN users u ON r.user_id = u.id
+                LEFT JOIN products p ON r.product_id = p.id
                 WHERE r.timestamp BETWEEN :startDate AND :endDate
-                GROUP BY r.product_id, u.email, p.name
+                GROUP BY r.product_id, p.name
                 ORDER BY COUNT(r.product_id) DESC
                 LIMIT 3
             """, nativeQuery = true)
