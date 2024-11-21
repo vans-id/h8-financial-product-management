@@ -1,7 +1,23 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-alpine AS build
 
 WORKDIR /app
 
-COPY build/libs/ProductAPI-0.0.1-SNAPSHOT.jar app.jar
+COPY build.gradle /app/
+COPY gradlew /app/
+COPY gradle /app/gradle
 
-CMD ["java", "-Dserver.port=8080", "-jar", "app.jar"]
+COPY src /app/src
+
+RUN chmod +x ./gradlew
+
+RUN ./gradlew bootJar --no-daemon
+
+FROM openjdk:17-alpine AS runner
+
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
