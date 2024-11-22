@@ -17,7 +17,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
                 SELECT  p.name, COUNT(r.product_id), p.price , p.stock
                 FROM reports r
                 LEFT JOIN products p ON r.product_id = p.id
-                WHERE r.timestamp BETWEEN :startDate AND :endDate
+                LEFT JOIN messages m ON r.message_id = m.id
+                WHERE (r.timestamp BETWEEN :startDate AND :endDate) AND (m.activity_type = 'UPDATE')
                 GROUP BY r.product_id, p.name
                 ORDER BY COUNT(r.product_id) DESC
                 LIMIT 3

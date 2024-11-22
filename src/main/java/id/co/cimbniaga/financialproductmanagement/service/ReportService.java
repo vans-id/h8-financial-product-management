@@ -20,6 +20,7 @@ public class ReportService {
         LocalDate startDate = reportSummaryDTO.getStartDate();
         LocalDate endDate = reportSummaryDTO.getEndDate();
 
+
         List<Object[]> results = reportRepository.getTopProducts(startDate, endDate);
 
         List<SimplifiedReportDTO> simplifiedReportDTOS = new ArrayList<>();
