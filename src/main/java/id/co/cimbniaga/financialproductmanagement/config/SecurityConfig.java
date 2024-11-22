@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
-//    private final UserRepository userRepository;
     private final AuthenticationProvider authenticationProvider;
 
     public SecurityConfig(JwtFilter jwtFilter, AuthenticationProvider authenticationProvider) {
@@ -29,14 +28,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login",
                                 "/api/auth/register").permitAll()
                         .requestMatchers("/api/auth/reports/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/auth/category/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
-
 }

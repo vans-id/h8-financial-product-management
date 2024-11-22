@@ -45,10 +45,8 @@ public class UserService {
 
     public void LogLoginUser(User user){
         Messages messages = messageRepository.findByActivityType("LOGIN");
-        System.out.println("COBA AJA YA INI BRO" + messages);
         if (messages == null)
         {
-            System.out.println("GA MASUK SINI DONG!");
             messages = new Messages();
             messages.setActivityType("LOGIN");
             messages.setDetail("User logged in");
@@ -62,7 +60,6 @@ public class UserService {
         report.setTimestamp(Timestamp.valueOf(uniqueTime));
         report.setMessages(messages);
         reportRepository.save(report);
-
     }
 
     public User registerUser(UserRequestDTO userRequestDTO) {
