@@ -33,7 +33,7 @@ public class CategoryController {
             Category category = categoryService.getCategoryById(id);
             return ResponseEntity.ok(category);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error retrieving category");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Duplicate Category");
         }
     }
 

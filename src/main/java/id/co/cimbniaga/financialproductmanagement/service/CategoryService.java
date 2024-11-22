@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -24,13 +25,23 @@ public class CategoryService {
     }
 
     public Category createCategory(CategoryRequestDTO categoryRequestDTO) {
-        Category category = new Category();
-        category.setName(categoryRequestDTO.getName());
+        Optional<Category> category = categoryRepository.findByName(categoryRequestDTO.getName());
+        if(category.isPresent()) {
+            throw new RuntimeException("Duplicate Category");
+        }
 
-        return categoryRepository.save(category);
+        Category cat = new Category();
+        cat.setName(categoryRequestDTO.getName());
+
+        return categoryRepository.save(cat);
     }
 
     public Category updateCategory(Long id, CategoryRequestDTO categoryRequestDTO) {
+        Optional<Category> cat = categoryRepository.findByName(categoryRequestDTO.getName());
+        if(cat.isPresent()) {
+            throw new RuntimeException("Duplicate Category");
+        }
+
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
