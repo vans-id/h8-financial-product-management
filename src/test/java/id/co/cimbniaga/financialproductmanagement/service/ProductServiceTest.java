@@ -1,5 +1,7 @@
 package id.co.cimbniaga.financialproductmanagement.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import id.co.cimbniaga.financialproductmanagement.constants.Variables;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
@@ -11,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +35,17 @@ class ProductServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    @MockBean
+    private RedisTemplate<String, String> redisTemplate;
+
+    @MockBean
+    private ValueOperations valueOperations;
+
     public ProductServiceTest() {
         MockitoAnnotations.openMocks(this); // Initialize mocks
     }
 
-    private Product productAddDummyData(int i){
+    private Product productAddDummyData(int i) {
         Product product = new Product();
         product.setId(i);
         product.setName("data" + i);
@@ -47,7 +58,7 @@ class ProductServiceTest {
         return product;
     }
 
-    private Category categoryAddDummyData(int i){
+    private Category categoryAddDummyData(int i) {
         Category category = new Category();
         category.setId(i);
         category.setName("cat" + i);
@@ -63,6 +74,8 @@ class ProductServiceTest {
         products.add(productAddDummyData(2));
         products.add(productAddDummyData(3));
 
+        doReturn(valueOperations).when(redisTemplate).opsForValue();
+        doReturn("").when(valueOperations).get(anyString());
         when(productRepository.findAll()).thenReturn(products);
 
         //mock list of products
