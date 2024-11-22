@@ -10,6 +10,8 @@ import id.co.cimbniaga.financialproductmanagement.repository.ReportRepository;
 import id.co.cimbniaga.financialproductmanagement.service.ProductService;
 import id.co.cimbniaga.financialproductmanagement.service.ReportService;
 import id.co.cimbniaga.financialproductmanagement.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
+@Tag(name = "Product Controller", description = "Products")
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -59,6 +62,7 @@ public class ProductController {
         reportRepository.save(report);
     }
 
+    @Operation(summary = "test swagger Product", description = "test swagger Product desc")
     @GetMapping()
     public ResponseEntity<?> getAll() {
         try {
