@@ -2,14 +2,11 @@ package id.co.cimbniaga.financialproductmanagement.service;
 
 import id.co.cimbniaga.financialproductmanagement.dto.CategoryRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Category;
-import id.co.cimbniaga.financialproductmanagement.model.Product;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -65,17 +62,6 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).findAll();
     }
 
-//    @Test
-//    void getAllCategoryTest_NoData() {
-//        when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
-//
-//        Exception exception = assertThrows(RuntimeException.class, () -> {
-//            categoryService.getAllCategory();
-//        });
-//
-//        assertEquals("Category not found", exception.getMessage());
-//    }
-
     @Test
     void createCategoryTest() {
         Category category = new Category();
@@ -94,24 +80,4 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).save(updatedCategory);
     }
 
-//    @Test
-//    void createCategoryTest_NotUnique() {
-//        Category category = new Category();
-//        category.setId(1);
-//        category.setName("Reksadana");
-//
-//        CategoryRequestDTO categoryRequestDTO = new CategoryRequestDTO();
-//        categoryRequestDTO.setName(category.getName());
-//
-//        when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        System.out.println(categoryService.createCategory(categoryRequestDTO));
-//        System.out.println(categoryService.createCategory(categoryRequestDTO));
-//
-//        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-//            categoryService.createCategory(categoryRequestDTO);
-//        });
-//
-//        assertEquals("Category already exists", exception.getMessage());
-//    }
 }

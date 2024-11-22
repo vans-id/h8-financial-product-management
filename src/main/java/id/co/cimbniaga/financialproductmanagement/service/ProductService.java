@@ -2,20 +2,13 @@ package id.co.cimbniaga.financialproductmanagement.service;
 
 
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
-import id.co.cimbniaga.financialproductmanagement.dto.UserRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
-import id.co.cimbniaga.financialproductmanagement.model.Report;
-import id.co.cimbniaga.financialproductmanagement.model.User;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
 import id.co.cimbniaga.financialproductmanagement.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
