@@ -1,9 +1,11 @@
 package id.co.cimbniaga.financialproductmanagement.service;
 
+import id.co.cimbniaga.financialproductmanagement.constants.Variables;
 import id.co.cimbniaga.financialproductmanagement.dto.CategoryRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +14,14 @@ import java.util.Optional;
 @Service
 public class CategoryService {
 
+    private final CategoryRepository categoryRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+
     @Autowired
-    private CategoryRepository categoryRepository;
+    public CategoryService(RedisTemplate<String, Object> redisTemplate, CategoryRepository categoryRepository) {
+        this.redisTemplate = redisTemplate;
+        this.categoryRepository = categoryRepository;
+    }
 
     public List<Category> getAllCategory() {
         return categoryRepository.findAll();
@@ -33,7 +41,11 @@ public class CategoryService {
         Category cat = new Category();
         cat.setName(categoryRequestDTO.getName());
 
-        return categoryRepository.save(cat);
+        Category saved = categoryRepository.save(cat);
+
+        redisTemplate.delete(Variables.REDIS_PRODUCTS_KEY);
+
+        return saved;
     }
 
     public Category updateCategory(Long id, CategoryRequestDTO categoryRequestDTO) {
@@ -47,7 +59,10 @@ public class CategoryService {
 
         category.setName(categoryRequestDTO.getName());
 
-        return categoryRepository.save(category);
+        Category saved = categoryRepository.save(category);
+        redisTemplate.delete(Variables.REDIS_PRODUCTS_KEY);
+
+        return saved;
     }
 
     public void deleteCategory(Long id) {
@@ -55,5 +70,6 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         categoryRepository.deleteById(id);
+        redisTemplate.delete(Variables.REDIS_PRODUCTS_KEY);
     }
 }
