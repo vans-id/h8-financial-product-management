@@ -1,7 +1,6 @@
 package id.co.cimbniaga.financialproductmanagement.controller;
 
 import id.co.cimbniaga.financialproductmanagement.dto.UserRequestDTO;
-import id.co.cimbniaga.financialproductmanagement.model.Messages;
 import id.co.cimbniaga.financialproductmanagement.model.User;
 import id.co.cimbniaga.financialproductmanagement.service.UserService;
 import id.co.cimbniaga.financialproductmanagement.util.JwtUtil;
@@ -24,7 +23,6 @@ public class UserController {
         this.jwtUtil = jwtUtil;
     }
 
-    //User Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User loginRequest) {
         User user = userService.validateUser(loginRequest.getEmail(), loginRequest.getPassword());
@@ -35,9 +33,6 @@ public class UserController {
         userService.LogLoginUser(user);
         return ResponseEntity.ok(token);
     }
-
-    //User Register
-    //User update Stock
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser (@RequestBody UserRequestDTO userRequestDTO) {
@@ -66,22 +61,5 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Successfully register Admin");
     }
-
-
-//    @PostMapping("/login")
-//    public ResponseEntity<?> loginUser (
-//            @RequestBody UserRequestDTO userRequestDTO
-//    ) {
-//        try {
-//            boolean isLogin = userService.LoginUser(userRequestDTO);
-//            if(isLogin) {
-//                return new ResponseEntity<>("Login Berhasil", HttpStatus.OK);
-//            } else {
-//                return new ResponseEntity<>("Login Gagal", HttpStatus.UNAUTHORIZED);
-//            }
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
 }

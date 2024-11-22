@@ -37,7 +37,6 @@ public class ReportService {
             dto.setPrice(price);
             dto.setStock(stock);
 
-            // Add the DTO to the list
             simplifiedReportDTOS.add(dto);
         }
 
