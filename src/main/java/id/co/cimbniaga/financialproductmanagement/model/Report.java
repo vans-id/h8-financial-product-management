@@ -15,10 +15,10 @@ public class Report {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    @JsonProperty("activity_type")
-    private String activityType;
+    @OneToOne
+    @JoinColumn(name = "message_id")
+    private Messages messages;
     private Timestamp timestamp;
-    private String details;
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
