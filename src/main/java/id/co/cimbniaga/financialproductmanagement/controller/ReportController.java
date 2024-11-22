@@ -20,7 +20,7 @@ public class ReportController {
     private ReportService reportService;
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping()
+    @PostMapping()
     public List<SimplifiedReportDTO> getTopProducts(@RequestBody ReportSummaryDTO reportSummaryDTO) {
         return reportService.getTopProducts(reportSummaryDTO);
     }

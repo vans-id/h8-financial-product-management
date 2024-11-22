@@ -5,8 +5,6 @@ import id.co.cimbniaga.financialproductmanagement.model.Messages;
 import id.co.cimbniaga.financialproductmanagement.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Optional;
 
 @Service
