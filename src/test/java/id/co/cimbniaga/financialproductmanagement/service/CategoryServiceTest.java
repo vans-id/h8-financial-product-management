@@ -70,7 +70,6 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).findAll();
     }
 
-<<<<<<< Updated upstream
 //    @Test
 //    void getAllCategoryTest_NoData() {
 //        when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
@@ -81,7 +80,6 @@ public class CategoryServiceTest {
 //
 //        assertEquals("Category not found", exception.getMessage());
 //    }
-=======
     @Test
     void getAllCategoryTest_NoData() {
         when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
@@ -120,7 +118,6 @@ public class CategoryServiceTest {
         assertEquals("Category not found", exception.getMessage());
         verify(categoryRepository, times(1)).findById(10L);
     }
->>>>>>> Stashed changes
 
 
     ///////////////////////////////////
@@ -143,7 +140,6 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).save(updatedCategory);
     }
 
-<<<<<<< Updated upstream
 //    @Test
 //    void createCategoryTest_NotUnique() {
 //        Category category = new Category();
@@ -164,7 +160,6 @@ public class CategoryServiceTest {
 //
 //        assertEquals("Category already exists", exception.getMessage());
 //    }
-=======
     @Test
     void createCategoryTestNotUnique() {
         Category category = new Category();
@@ -275,6 +270,4 @@ public class CategoryServiceTest {
         verify(categoryRepository, never()).deleteById(anyLong());
     }
 
-
->>>>>>> Stashed changes
 }

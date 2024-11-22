@@ -10,6 +10,7 @@ import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
 import id.co.cimbniaga.financialproductmanagement.repository.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -31,8 +33,13 @@ public class ProductService {
         this.redisTemplate = redisTemplate;
     }
 
+
+
     public List<Product> getAll() {
         String jsonString = (String) redisTemplate.opsForValue().get(Variables.REDIS_PRODUCTS_KEY);
+
+        System.out.println("jsons string");
+        System.out.println(jsonString);
         List<Product> products;
 
         if (jsonString != null) {

@@ -1,5 +1,7 @@
 package id.co.cimbniaga.financialproductmanagement.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.co.cimbniaga.financialproductmanagement.constants.Variables;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
@@ -7,15 +9,17 @@ import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
 import id.co.cimbniaga.financialproductmanagement.repository.ProductRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +39,18 @@ class ProductServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
-    @MockBean
+    @Mock
     private RedisTemplate<String, String> redisTemplate;
 
-    @MockBean
-    private ValueOperations valueOperations;
+    @Mock
+    private ValueOperations<String, String> valueOperations;
 
-    public ProductServiceTest() {
-        MockitoAnnotations.openMocks(this); // Initialize mocks
-    }
+    @Mock
+    private ObjectMapper objectMapper;
+
+//    public ProductServiceTest() {
+//        MockitoAnnotations.openMocks(this); // Initialize mocks
+//    }
 
     private Product productAddDummyData(int i) {
         Product product = new Product();
@@ -66,17 +73,27 @@ class ProductServiceTest {
         return category;
     }
 
+    @BeforeEach
+    void setup() {
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+    }
+
     ///////////////////////////////
     @Test
-    void getAllProductsWithData() {
+    void getAllProductsWithData() throws JsonProcessingException {
         List<Product> products = new ArrayList<>();
         products.add(productAddDummyData(1));
         products.add(productAddDummyData(2));
         products.add(productAddDummyData(3));
 
-        doReturn(valueOperations).when(redisTemplate).opsForValue();
-        doReturn("").when(valueOperations).get(anyString());
-        when(productRepository.findAll()).thenReturn(products);
+//        doReturn(valueOperations).when(redisTemplate).opsForValue();
+//        doReturn("").when(valueOperations).get(anyString());
+//        when(redisTemplate.opsForValue().get(anyString())).thenReturn("");
+
+
+        when(objectMapper.readValue(anyString(), any(TypeReference.class))).thenReturn(products);
+        when(valueOperations.get(Variables.REDIS_PRODUCTS_KEY)).thenReturn("test result from redis");
+//        when(productRepository.findAll()).thenReturn(products);
 
         //mock list of products
         List<Product> allProducts = productService.getAll();
