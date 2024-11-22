@@ -65,16 +65,16 @@ public class CategoryServiceTest {
         verify(categoryRepository, times(1)).findAll();
     }
 
-//    @Test
-//    void getAllCategoryTest_NoData() {
-//        when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
-//
-//        Exception exception = assertThrows(RuntimeException.class, () -> {
-//            categoryService.getAllCategory();
-//        });
-//
-//        assertEquals("Category not found", exception.getMessage());
-//    }
+    @Test
+    void getAllCategoryTest_NoData() {
+        when(categoryRepository.findAll()).thenReturn(new ArrayList<>());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            categoryService.getAllCategory();
+        });
+
+        assertEquals("Category not found", exception.getMessage());
+    }
 
     @Test
     void createCategoryTest() {
