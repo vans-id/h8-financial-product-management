@@ -1,39 +1,94 @@
 package id.co.cimbniaga.financialproductmanagement.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import id.co.cimbniaga.financialproductmanagement.constants.Variables;
 import id.co.cimbniaga.financialproductmanagement.dto.ProductRequestDTO;
-import id.co.cimbniaga.financialproductmanagement.dto.UserRequestDTO;
 import id.co.cimbniaga.financialproductmanagement.model.Category;
 import id.co.cimbniaga.financialproductmanagement.model.Product;
-import id.co.cimbniaga.financialproductmanagement.model.Report;
-import id.co.cimbniaga.financialproductmanagement.model.User;
 import id.co.cimbniaga.financialproductmanagement.repository.CategoryRepository;
 import id.co.cimbniaga.financialproductmanagement.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
+
     @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    public ProductService(ObjectMapper objectMapper, ProductRepository productRepository, CategoryRepository categoryRepository, RedisTemplate<String, Object> redisTemplate) {
+        this.objectMapper = objectMapper;
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.redisTemplate = redisTemplate;
+    }
 
     public List<Product> getAll() {
-        return productRepository.findAll();
+        String jsonString = (String) redisTemplate.opsForValue().get(Variables.REDIS_PRODUCTS_KEY);
+        List<Product> products;
+
+        if (jsonString != null) {
+            try {
+                products = objectMapper.readValue(jsonString, new TypeReference<>() {
+                });
+                System.out.println("goes cache...");
+                return products;
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        products = productRepository.findAll();
+        try {
+            String jsonArrString = objectMapper.writeValueAsString(products);
+            redisTemplate.opsForValue().set(Variables.REDIS_PRODUCTS_KEY, jsonArrString);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("goes db...");
+
+        return products;
     }
 
     public Product getById(long id) {
-        //return productRepository.findById(id);
-        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        String jsonString = (String) redisTemplate.opsForValue().get(Variables.REDIS_PRODUCTS_KEY);
+        List<Product> products;
+
+        if (jsonString != null) {
+            try {
+                products = objectMapper.readValue(jsonString, new TypeReference<>() {
+                });
+                for (Product product : products) {
+                    if (product.getId() == id) return product;
+                }
+
+                throw new RuntimeException("Product Not Found");
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+
+        return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product Not Found"));
     }
 
     public void deleteById(long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
         productRepository.delete(product);
+
+//        redisTemplate.getConnectionFactory().getConnection().serverCommands().flushAll();
+        redisTemplate.delete(Variables.REDIS_PRODUCTS_KEY);
     }
 
     public Product editById(long id, ProductRequestDTO productRequestDTO) {
@@ -62,7 +117,10 @@ public class ProductService {
         product.setStock(productRequestDTO.getStock());
         product.setCategory(category);
 
-        return productRepository.save(product);
+        productRepository.save(product);
+        redisTemplate.delete(Variables.REDIS_PRODUCTS_KEY);
+
+        return product;
     }
 
     public Product create(ProductRequestDTO productRequestDTO) {
@@ -91,6 +149,9 @@ public class ProductService {
         product.setStock(productRequestDTO.getStock());
         product.setCategory(category);
 
-        return productRepository.save(product);
+        productRepository.save(product);
+        redisTemplate.delete(Variables.REDIS_PRODUCTS_KEY);
+
+        return product;
     }
 }

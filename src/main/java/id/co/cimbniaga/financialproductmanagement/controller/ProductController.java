@@ -38,6 +38,7 @@ public class ProductController {
             List<Product> products = productService.getAll();
             return ResponseEntity.status(HttpStatus.OK).body(products);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail to get Products");
         }
     }
