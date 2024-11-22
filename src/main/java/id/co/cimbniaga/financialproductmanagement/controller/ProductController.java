@@ -71,7 +71,7 @@ public class ProductController {
             addReport("VIEW", products.get(0)); //khusus buat GETALL, Product yg di pass ke addReport() ga dipake
             return ResponseEntity.status(HttpStatus.OK).body(products);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fail to get Products");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get Products");
         }
     }
 
