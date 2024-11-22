@@ -19,7 +19,7 @@ public class Product {
     @Column(nullable = false)
     private double price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "isAvailable")
     private boolean availability;
 
     @Column(nullable = false)
